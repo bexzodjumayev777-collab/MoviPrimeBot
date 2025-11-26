@@ -1,0 +1,47 @@
+BOT_TOKEN = "7799923083:AAG4BFDX3yMqMLK5sLNwzgiZ-Y36yFligO4"CHANNEL_USERNAME = "@MoviPrime"file_code = f"{@MoviPrime1}/{500}"
+bot.send_video(message.chat.id, file_code)bot.send_video(message.chat.id, "VIDEO_FILE_ID")
+except telebot.apihelper.ApiException as e:
+    bot.send_message(message.chat.id, f"{number} raqamli kino topilmadi!")import telebot
+
+# Bot tokeningiz (siz bergan)
+BOT_TOKEN = "7799923083:AAG4BFDX3yMqMLK5sLNwzgiZ-Y36yFligO4"
+bot = telebot.TeleBot(BOT_TOKEN)
+
+# Raqam -> video file_id lug'ati
+# Misol: foydalanuvchi 4318 raqamni yuborsa, video chiqadi
+# Shu file_id ni Telegramdan olish kerak (pastda ko'rsatib berilgan)
+movies = {
+    "4318": "BU_YERGA_FILE_ID_4318_QO'YING"
+}
+
+# /start buyrug'i
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.send_message(
+        message.chat.id,
+        "Assalomu alaykum!\n"
+        "Kino raqamini yuboring (masalan: 4318)."
+    )
+
+# Video file_id olish uchun test handler
+@bot.message_handler(content_types=['video'])
+def get_file_id(message):
+    file_id = message.video.file_id
+    bot.send_message(message.chat.id, f"Video file_id: {file_id}")
+
+# Foydalanuvchi raqam yuborganda
+@bot.message_handler(func=lambda m: True)
+def send_movie(message):
+    number = message.text.strip()
+
+    if not number.isdigit():
+        bot.send_message(message.chat.id, "Faqat raqam yuboring!")
+        return
+
+    if number in movies:
+        bot.send_video(message.chat.id, movies[number])
+    else:
+        bot.send_message(message.chat.id, f"{number} raqamli kino topilmadi!")
+
+# Botni ishga tushirish
+bot.polling()
